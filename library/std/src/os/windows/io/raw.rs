@@ -140,6 +140,13 @@ impl<'a> AsRawHandle for io::StderrLock<'a> {
     }
 }
 
+impl AsRawHandle for RawHandle {
+    #[inline]
+    fn as_raw_handle(&self) -> RawHandle {
+        *self
+    }
+}
+
 // Translate a handle returned from `GetStdHandle` into a handle to return to
 // the user.
 fn stdio_handle(raw: RawHandle) -> RawHandle {
@@ -165,11 +172,25 @@ impl FromRawHandle for fs::File {
     }
 }
 
+impl FromRawHandle for RawHandle {
+    #[inline]
+    unsafe fn from_raw_handle(handle: RawHandle) -> RawHandle {
+        handle
+    }
+}
+
 #[stable(feature = "into_raw_os", since = "1.4.0")]
 impl IntoRawHandle for fs::File {
     #[inline]
     fn into_raw_handle(self) -> RawHandle {
         self.into_inner().into_raw_handle() as *mut _
+    }
+}
+
+impl IntoRawHandle for RawHandle {
+    #[inline]
+    fn into_raw_handle(self) -> RawHandle {
+        self
     }
 }
 
@@ -256,6 +277,13 @@ impl AsRawSocket for net::UdpSocket {
     }
 }
 
+impl AsRawSocket for RawSocket {
+    #[inline]
+    fn as_raw_socket(&self) -> RawSocket {
+        *self
+    }
+}
+
 #[stable(feature = "from_raw_os", since = "1.1.0")]
 impl FromRawSocket for net::TcpStream {
     #[inline]
@@ -287,6 +315,13 @@ impl FromRawSocket for net::UdpSocket {
     }
 }
 
+impl FromRawSocket for RawSocket {
+    #[inline]
+    unsafe fn from_raw_socket(sock: RawSocket) -> RawSocket {
+        sock
+    }
+}
+
 #[stable(feature = "into_raw_os", since = "1.4.0")]
 impl IntoRawSocket for net::TcpStream {
     #[inline]
@@ -308,5 +343,12 @@ impl IntoRawSocket for net::UdpSocket {
     #[inline]
     fn into_raw_socket(self) -> RawSocket {
         self.into_inner().into_socket().into_inner().into_raw_socket()
+    }
+}
+
+impl IntoRawSocket for RawSocket {
+    #[inline]
+    fn into_raw_socket(self) -> RawSocket {
+        self
     }
 }
